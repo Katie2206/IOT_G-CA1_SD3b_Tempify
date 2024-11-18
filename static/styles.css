@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;800&display=swap');
+
+
+/*NavBar*/
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+    
+}
+
+
+body{
+   
+    min-height: 100vh;
+    background-size: 100% auto;
+    background-color: red;
+    
+}
+
+.temp_header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+
+.temp_logo{
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+}
+
+.temp_nav a {
+    margin-left: 40px;
+    font-size: 18px;
+    font-weight: 450;
+    color: white;
+    text-decoration: none;
+}
+
+.temp_signup{
+    text-decoration: none;
+    font-weight: 400;
+    color: #097969	;
+    font-size: 20px;
+    border-radius: 16px;
+    background-color: white;
+    padding: 10px 20px;
+    
+}
+
+
+/*Home Page Intro*/
+
+/*
+
+.intro_nav{
+    min-height: 100vh;
+    background-size: 100% auto;
+    background: url('./images/background.jpg') no-repeat center;
+}
+
+*/
+
+
+/*.intro_nav p{
+    margin-top: 500px;
+    display: flex;
+   
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+}*/
