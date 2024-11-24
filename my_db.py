@@ -6,16 +6,14 @@ class User(db.Model):
     __tablename__ = "UserInformation"
     User_ID = db.Column(db.Integer, primary_key = True)
     Username = db.Column(db.String(255), nullable=False)
-    Password = db.Column(db.String(255), nullable=False)
+    Password = db.Column(db.String(255), nullable=True)
     Email_Address = db.Column(db.String(255), nullable=False)
-    Auth_Key = db.Column(db.String(255), nullable=False)
 
-    def __init__(self, User_ID, Username, Password, Email_Address, Auth_Key):
+    def __init__(self, User_ID, Username, Password, Email_Address):
         self.User_ID = User_ID
         self.Username = Username
         self.Password = Password
         self.Email_Address = Email_Address
-        self.Auth_Key = Auth_Key
 
 
 def delete_all():
@@ -52,7 +50,7 @@ def view_all():
 
 def print_results(rows):
     for row in rows:
-        print(f"{row.User_ID} | {row.Username} | {row.Password} | {row.Email_Address}")
+        print(f"{row.User_ID} | {row.Username} | {row.Email_Address}")
         
 
 class Plant(db.Model):

@@ -61,7 +61,7 @@ def index():
 @app.route("/protected_area")
 @login_is_required
 def protected_area():
-    my_db.add_user_and_login(session['name'], session['google_id'])
+    my_db.add_user_and_login(session['google_id'], session['username'], session['password'], session['email_address'])
     return render_template("main.html")
 
 
@@ -96,14 +96,16 @@ def callback():
     )
 
     session["google_id"] = id_info.get("sub")
-    session["name"] = id_info.get("name")
+    session["username"] = id_info.get("name")
+    session["password"] = id_info.get("password") 
+    session["email_address"] = id_info.get("email")
     print(session["google_id"])
     print(session["name"])
     return redirect("/protected_area")
 
-# @app.route("/main")
-# def main():
-#     return render_template("main.html")
+@app.route("/main")
+def main():
+    return render_template("main.html")
 
 # @app.route("/keep_alive")
 # def keep_alive():
