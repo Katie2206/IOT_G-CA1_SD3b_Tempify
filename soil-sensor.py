@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 import time
 
 # GPIO setup
-channel = 21  # GPIO pin connected to the DO (Digital Output) of the sensor
+channel = 21  
 GPIO.setmode(GPIO.BCM)  # Use Broadcom pin numbering
 GPIO.setup(channel, GPIO.IN)  # Set GPIO pin as input
 
@@ -24,9 +24,7 @@ try:
         time.sleep(3)
 
 except KeyboardInterrupt:
-    # Graceful exit on Ctrl+C
     print("Exiting gracefully")
 
 finally:
-    # Clean up GPIO configurations
     GPIO.cleanup()
