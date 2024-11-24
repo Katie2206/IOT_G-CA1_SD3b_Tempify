@@ -1,25 +1,33 @@
-from flask_mongoengine import MongoEngine
+from flask_sqlalchemy import SQLAlchemy
 
-db = MongoEngine()
+db = SQLAlchemy()
 
-class User(db.Document):
-    User_ID = db.IntField(required=True)
-    Username = db.StringField(required=True)
-    Password = db.StringField(required=True)
-    Email_Address = db.StringField(required=True)
-    Auth_Key = db.StringField(required=True)
+class User(db.Model):
+    __tablename__ = "UserInformation"
+    User_ID = db.Column(db.Integer, primary_key = True)
+    Username = db.Column(db.String(255), nullable=False)
+    Password = db.Column(db.String(255), nullable=False)
+    Email_Address = db.Column(db.String(255), nullable=False)
+    Auth_Key = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, User_ID, Username, Password, Email_Address, Auth_Key):
+        self.User_ID = User_ID
+        self.Username = Username
+        self.Password = Password
+        self.Email_Address = Email_Address
+        self.Auth_Key = Auth_Key
 
 
 def delete_all():
     try:
-        User.objects({}).delete()
-        print("Users Have Been Deleted")
+        db.session.query(User).delete()
+        db.session.commit()
     except Exception as e:
-        print("Deletion Failed: " + str(e))
+        db.session.rollback()
 
 
 def get_user_row_if_exists(User_ID):
-    get_user_row = User.objects(User_ID = User_ID).first()
+    get_user_row = User.query.filter_by(User_ID = User_ID).first()
     if get_user_row is not None:
         return get_user_row
     else:
@@ -30,14 +38,15 @@ def get_user_row_if_exists(User_ID):
 def add_user_and_login(Username, User_ID, Password, Email_Address):
     row = get_user_row_if_exists(User_ID)
     if row is not False:
-        print("User Already Exists")
+        db.session.commit()
     else:
-        ("Creating User: " + Username)
-        User(Username = Username, User_ID = User_ID, Password = Password, Email_Address = Email_Address).save()
+        new_user = User(Username, User_ID, Password, Email_Address)
+        db.session.add(new_user)
+        db.session.commit()
 
 
-def view_all_users():
-    rows = User.objects.all()
+def view_all():
+    rows = User.query.all()
     print_results(rows)
 
 
@@ -46,27 +55,37 @@ def print_results(rows):
         print(f"{row.User_ID} | {row.Username} | {row.Password} | {row.Email_Address}")
         
 
-class Plant(db.Document):
-    Plant_ID = db.IntField(required=True)
-    Name = db.StringField(required=True)
-    Plant_Type = db.StringField(required=True)
-    Last_Updated = db.DateTimeField(default = datetime.utcnow)
-    Current_Temperature = db.FloatField(required=True)
-    Current_Humidity = db.FloatField(required=True)
-    Current_Soil_Moisture = db.FloatField(required=True)
-    User_ID = db.IntField(required=True)
+class Plant(db.Model):
+    __tablename__ = "PlantInformation"
+    Plant_ID = db.Column(db.Integer, primary_key = True)
+    Name = db.Column(db.String(255), nullable=False)
+    Plant_Type = db.Column(db.String(255), nullable=False)
+    Last_Updated = db.Column(db.DateTime, nullable=False)
+    Current_Temperature = db.Column(db.Float, nullable=False)
+    Current_Humidity = db.Column(db.Float, nullable=False)
+    Current_Soil_Moisture = db.Column(db.Float, nullable=False)
+    User_ID = db.Column(db.Integer, nullable=False)
 
+    def __init__(self, Plant_ID, Name, Plant_Type, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture, User_ID):
+        self.Plant_ID = Plant_ID
+        self.Name = Name
+        self.Plant_Type = Plant_Type
+        self.Last_Updated = Last_Updated
+        self.Current_Temperature = Current_Temperature
+        self.Current_Humidity = Current_Humidity
+        self.Current_Soil_Moisture = Current_Soil_Moisture
+        self.User_ID = User_ID
 
 def delete_all_plants():
     try:
-        Plant.objects({}).delete()
-        print("Plants Have Been Deleted")
+        db.session.query(Plant).delete()
+        db.session.commit()
     except Exception as e:
-        print("Deletion Failed: " + str(e))
+        db.session.rollback()
 
 
 def get_plant_if_exists(Plant_ID):
-    get_plant_row = Plant.objects(Plant_ID = Plant_ID).first()
+    get_plant_row = Plant.query.filter_by(Plant_ID = Plant_ID).first()
     if get_plant_row is not None:
         return get_plant_row
     else:
@@ -77,15 +96,15 @@ def get_plant_if_exists(Plant_ID):
 def add_plant(Plant_ID, Name, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture, User_ID):
     row = get_plant_if_exists(Plant_ID)
     if row is not False:
-        print("Plant Already Exists")
+        db.session.commit()
     else:
-        ("Creating Plant: " + Name)
-        Plant(Plant_ID, Name, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture, User_ID)
-    print("Plant " + Name + " Added!")
+        new_plant = User(Plant_ID, Name, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture, User_ID)
+        db.session.add(new_plant)
+        db.session.commit()
 
 
-def view_all_plants():
-    rows = Plant.objects.all()
+def view_all():
+    rows = Plant.query.all()
     print_plants(rows)
 
 
@@ -94,24 +113,32 @@ def print_plants(rows):
         print(f"{row.Plant_ID} | {row.Name} | {row.Last_Updated} | {row.Current_Temperature} | {row.Current_Humidity} | {row.Current_Soil_Moisture} | {row.User_ID}")
 
 
-class Temperature(db.Document):
-    Current_Temperature = db.FloatField(required=True)
-    Max_Temp = db.FloatField(required=True)
-    Min_Temp = db.FloatField(required=True)
-    Ideal_Temp = db.FloatField(required=True)
-    Error_Margin = db.FloatField(required=True)
+class Temperature(db.Model):
+    __tablename__ = "TemperatureInformation"
+    Current_Temperature = db.Column(db.Float, nullable=False, primary_key = True)
+    Max_Temp = db.Column(db.Float, nullable=False)
+    Min_Temp = db.Column(db.Float, nullable=False)
+    Ideal_Temp = db.Column(db.Float, nullable=False)
+    Error_Margin = db.Column(db.Float, nullable=False)
 
+    def __init__(self, Current_Temperature, Max_Temp, Min_Temp, Ideal_Temp, Error_Margin):
+        self.Current_Temperature = Current_Temperature
+        self.Max_Temp = Max_Temp
+        self.Min_Temp = Min_Temp
+        self.Ideal_Temp = Ideal_Temp
+        self.Error_Margin = Error_Margin
     
+
 def delete_all_temperatures():
     try:
-        Temperature.objects({}).delete()
-        print("Temperatures Have Been Deleted")
+        db.session.query(Temperature).delete()
+        db.session.commit()
     except Exception as e:
-        print("Deletion Failed: " + str(e))
+        db.session.rollback()
 
 
-def view_all_temperature():
-    rows = Temperature.objects.all()
+def view_all():
+    rows = Temperature.query.all()
     print_temperature(rows)
 
 
@@ -120,23 +147,31 @@ def print_temperature(rows):
         print(f"{row.Current_Temperature} | {row.Max_Temp} | {row.Min_Temp} | {row.Ideal_Temp} | {row.Error_Margin}")
 
 
-class Humidity(db.Document):
-    Current_Humidity = db.FloatField(required=True)
-    Max_Humidity = db.FloatField(required=True)
-    Min_Humidity = db.FloatField(required=True)
-    Ideal_Humidity = db.FloatField(required=True)
-    Error_Margin = db.FloatField(required=True)
+class Humidity(db.Model):
+    __tablename__ = "HumidityInformation"
+    Current_Humidity = db.Column(db.Float, nullable=False, primary_key = True)
+    Max_Humidity = db.Column(db.Float, nullable=False)
+    Min_Humidity = db.Column(db.Float, nullable=False)
+    Ideal_Humidity = db.Column(db.Float, nullable=False)
+    Error_Margin = db.Column(db.Float, nullable=False)
+
+    def __init__(self, Current_Humidity, Max_Humidity, Min_Humidity, Ideal_Humidity, Error_Margin):
+        self.Current_Humidity = Current_Humidity
+        self.Max_Humidity = Max_Humidity
+        self.Min_Humidity = Min_Humidity
+        self.Ideal_Humidity = Ideal_Humidity
+        self.Error_Margin = Error_Margin
 
 
 def delete_all_humidity():
     try:
-        Humidity.objects({}).delete()
-        print("Humidity Has Been Deleted")
+        db.session.query(Humidity).delete()
+        db.session.commit()
     except Exception as e:
-        print("Deletion Failed: " + str(e))
+        db.session.rollback()
 
-def view_all_humidity():
-    rows = Humidity.objects.all()
+def view_all():
+    rows = Humidity.query.all()
     print_humidity(rows)
 
 
@@ -145,23 +180,31 @@ def print_humidity(rows):
         print(f"{row.Current_Humidity} | {row.Max_Humidity} | {row.Min_Humidity} | {row.Ideal_Humidity} | {row.Error_Margin}")
 
 
-class Soil(db.Document):
-    Current_Soil_Moisture = db.StringField(required=True)
-    Above_Moisture = db.FloatField(required=True)
-    Below_Moisture = db.FloatField(required=True)
-    Soil_Moisture = db.IntField(required=True)
-    Threshold = db.IntField(required=True)
+class Soil(db.Model):
+    __tablename__ = "SoilMoistureInformation"
+    Current_Soil_Moisture = db.Column(db.String(255), nullable=False, primary_key = True)
+    Above_Moisture = db.Column(db.Float, nullable=False)
+    Below_Moisture = db.Column(db.Float, nullable=False)
+    Soil_Moisture = db.Column(db.Integer, nullable=False)
+    Threshold = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, Current_Soil_Moisture, Above_Moisture, Below_Moisture, Soil_Moisture, Threshold):
+        self.Current_Soil_Moisture = Current_Soil_Moisture
+        self.Above_Moisture = Above_Moisture
+        self.Min_Below_MoistureTemp = Below_Moisture
+        self.Soil_Moisture = Soil_Moisture
+        self.Threshold = Threshold  
 
 
 def delete_all_soil():
     try:
-        Soil.objects({}).delete()
-        print("Soil Moisture Has Been Deleted")
+        db.session.query(Soil).delete()
+        db.session.commit()
     except Exception as e:
-        print("Deletion Failed: " + str(e))
+        db.session.rollback()
 
-def view_all_soil():
-    rows = Soil.objects.all()
+def view_all():
+    rows = Soil.query.all()
     print_soil(rows)
 
 
