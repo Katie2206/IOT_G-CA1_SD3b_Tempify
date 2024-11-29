@@ -81,6 +81,18 @@ def index():
 def main():
     return render_template("main.html")
 
+@app.route("/temp")
+def temp():
+    return render_template("temp.html")
+
+@app.route("/soilTemp")
+def soilTemp():
+    return render_template("soilTemp.html")
+
+@app.route("/humidity")
+def humidity():
+    return render_template("humidity.html")
+
 
 
 @app.route("/protected_area")

@@ -7,6 +7,20 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <header class="temp_header">
+        <a href="{{ url_for('index')}}" class="temp_logo">Tempify</a>
+
+        <nav class="temp_nav">
+            <a href="{{ url_for('index')}}" class="nav_item">Home</a>
+            <a href="{{ url_for('main')}}" class="nav_item">Plant</a>
+            <a href="#" class="nav_item">Device</a>
+            <a href="#" class="nav_item">About</a>
+            <a href="{{ url_for('temp')}}" class="nav_item">Temperature</a>
+            <a href="{{ url_for('humidity')}}" class="nav_item">Humidity</a>
+            <a href="{{ url_for('soilTemp')}}" class="nav_item"> Soil Temperature</a>
+        </nav>
+
+        <a href="{{ url_for('login') }}" class="temp_signup">Login</a>
+    </header>
 </body>
 </html>
