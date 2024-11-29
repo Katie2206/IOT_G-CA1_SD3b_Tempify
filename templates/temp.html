@@ -21,6 +21,20 @@
         </nav>
 
         <a href="{{ url_for('login') }}" class="temp_signup">Login</a>
+
     </header>
+
+
+    <section class="main_page">
+        <div class="main_page_container">
+            <div class="main_page_contents">
+                <div class="tempature">
+                    <h1>TEMPERATURE</h1>
+                    <h3></h3>
+                    <img src="{{ url_for('static', filename='images/hot.png') }}" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 </html>
