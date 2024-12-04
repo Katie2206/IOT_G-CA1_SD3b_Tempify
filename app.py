@@ -26,8 +26,10 @@ flow = Flow.from_client_secrets_file(
 def login_is_required(function):
     def wrapper(*args, **kwargs):
         if "google_id" not in session:
-            return abort(401)
-        return function(*args, **kwargs)
+            return abort(401)  
+        else:
+            return function()
+
     return wrapper
 
 
@@ -47,7 +49,7 @@ def callback():
     flow.fetch_token(authorization_response=request.url)
 
     if not session["state"] == request.args["state"]:
-        abort(500)
+        abort(500)  
 
     credentials = flow.credentials
     request_session = requests.session()
@@ -60,9 +62,9 @@ def callback():
         audience=GOOGLE_CLIENT_ID
     )
 
-    session["google_id"] = id_info.get("sub")  
-    session["name"] = id_info.get("name")  
-    return redirect(url_for("protected_area"))
+    session["google_id"] = id_info.get("sub")
+    session["name"] = id_info.get("name")
+    return redirect("/protected_area")
 
 
 

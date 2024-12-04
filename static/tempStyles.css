@@ -122,6 +122,11 @@ body{
     transition: .5s;
 }
 
+.main_page_contents h1{
+    text-align: left;
+    margin-bottom: 10px;
+}
+
 .main_page_contents div:hover{
     color: white;
     background-color: #02353C;
