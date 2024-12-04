@@ -64,7 +64,7 @@ def callback():
 
     session["google_id"] = id_info.get("sub")
     session["name"] = id_info.get("name")
-    return redirect("/protected_area")
+    return redirect("/")
 
 
 
@@ -77,23 +77,23 @@ def logout():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", logged_in=("google_id" in session), username=session.get("name"))
 
 @app.route("/main")
 def main():
-    return render_template("main.html")
+    return render_template("main.html", logged_in=("google_id" in session), username=session.get("name"))
 
 @app.route("/temp")
 def temp():
-    return render_template("temp.html")
+    return render_template("temp.html", logged_in=("google_id" in session), username=session.get("name"))
 
 @app.route("/soilTemp")
 def soilTemp():
-    return render_template("soilTemp.html")
+    return render_template("soilTemp.html", logged_in=("google_id" in session), username=session.get("name"))
 
 @app.route("/humidity")
 def humidity():
-    return render_template("humidity.html")
+    return render_template("humidity.html", logged_in=("google_id" in session), username=session.get("name"))
 
 
 

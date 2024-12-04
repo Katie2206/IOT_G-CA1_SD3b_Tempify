@@ -19,8 +19,14 @@
             <a href="#" class="nav_item">Device</a>
             <a href="#" class="nav_item">About</a>
         </nav>
-
+       
+        {% if logged_in %}
+        <a href="{{ url_for('logout') }}" class="temp_signup">Logout</a>
+        {% else %}
         <a href="{{ url_for('login') }}" class="temp_signup">Login</a>
+        {% endif %}
+        
+
     </header>
 
 
@@ -40,8 +46,8 @@
                </div>
     
                <div class="soil_temp">
-                    <h1>SOIL TEMPERATURE</h1>
-                    <h3>OK</h3>
+                    <h1>SOIL MOISTURE</h1>
+                    <h3>WET</h3>
                     <img src="{{ url_for('static', filename='images/ok.png') }}" alt="">
                </div>
             </div>

@@ -50,6 +50,7 @@ body{
     font-weight: 520;
     color: #02353C;
     text-decoration: none;
+    
 }
 
 .temp_nav a:hover{
@@ -57,6 +58,7 @@ body{
 }
 
 .temp_signup{
+    font-weight: 520;
     display: inline-flex;
     width: 150px;
     height: 100%;
@@ -74,12 +76,14 @@ body{
     -webkit-transition: ease-out 0.4s;
      -moz-transition: ease-out 0.4s;
     transition: ease-out 0.4s;
+   
 }
 
 .temp_signup:hover {
     color: white;
     box-shadow: inset 400px 0 0 0 #02353C;
   }
+
 
 
 

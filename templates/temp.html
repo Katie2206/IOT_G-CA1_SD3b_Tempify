@@ -20,7 +20,11 @@
             <a href="#" class="nav_item">About</a>
         </nav>
 
+        {% if logged_in %}
+        <a href="{{ url_for('logout') }}" class="temp_signup">Logout</a>
+        {% else %}
         <a href="{{ url_for('login') }}" class="temp_signup">Login</a>
+        {% endif %}
 
     </header>
 
