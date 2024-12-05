@@ -3,10 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class User(db.Model):
-    __tablename__ = "user"
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(30))
-    user_id = db.Column(db.String(21))
+    name = db.Column(db.String(30), nullable=False)
+    user_id = db.Column(db.String(21), nullable=False)
     token = db.Column(db.String(255))
     login = db.Column(db.Integer)
     read_access = db.Column(db.Integer)
@@ -70,6 +70,12 @@ def get_token(user_id):
     else:
         print("User with id: " + user_id + " doesn't exist")
 
+def delete_revoked_token(user_id):
+    row = get_user_row_if_exists(user_id)
+    if row is not False:
+        row.token = None
+        db.session.commit()
+
 
 def view_all():
     all_rows = User.query.all()
@@ -77,41 +83,34 @@ def view_all():
 
 
 def print_results(all_rows):
-    for n in range(0, len(all_rows)):
-        print(f"{all_rows[n].id} | {all_rows[n].name} | {all_rows[n].token} | {all_rows[n].login} | {all_rows[n].read_access} | {all_rows[n].write_access}")
-
+      for row in rows:
+       print(f"{row.id} | {row.name} | {row.user_id} | {row.token} | {row.login} | {row.read_access} | {row.write_access} | {all_rows[n].login} | {all_rows[n].read_access} | {all_rows[n].write_access}")
 
 def get_all_logged_in_users():
     rows = User.query.filter_by(login=1).all()
-    print_results(rows)
-    online_users = {"users":[]}
+    user_records = {"users" : []}
     for row in rows:
-        if row.read_access == 0 and row.write_access == 0:
-            read = "unchecked"
-            write = "unchecked"
-        elif row.read_access == 1 and row.write_access == 0:
+        if row.read_access == 1:
             read = "checked"
-            write = "unchecked"
-        elif row.read_access == 0 and row.write_access == 1:
+        else:
             read = "unchecked"
+        if row.write_access == 1:
             write = "checked"
         else:
-            read = "checked"
-            write = "checked"
-        online_users["users"].append([row.name, row.user_id, read, write])
-    return online_users
-
+            write = "unchecked"
+        user_records["users"].append([row.name, row.user_id, read, write])
+    return user_records
 
 def add_user_permission(user_id, read, write):
     row = get_user_row_if_exists(user_id)
     if row is not False:
-        if read=="true":
-            row.read_access=1
-        elif read=="false":
-            row.read_access=0
-        if write=="true":
-            row.write_access=1
-        elif write=="false":
-            row.write_access=0
+        if read == "true":
+            row.read_access = 1
+        else:
+            row.read_access = 0
+        if write == "true":
+            row.write_access = 1
+        else:
+            row.write_acccess = 0
         db.session.commit()
 
