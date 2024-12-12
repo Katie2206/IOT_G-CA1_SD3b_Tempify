@@ -16,26 +16,14 @@
             <a href="{{ url_for('temp')}}" class="nav_item">Temperature</a>
             <a href="{{ url_for('humidity')}}" class="nav_item">Humidity</a>
             <a href="{{ url_for('soilTemp')}}" class="nav_item"> Soil Temperature</a>
-            <a href="#" class="nav_item">Device</a>
-            <a href="#" class="nav_item">About</a>
         </nav>
 
-        {% if logged_in %}
-        <a href="{{ url_for('logout') }}" class="temp_signup">Logout</a>
-        {% else %}
-        <a href="{{ url_for('login') }}" class="temp_signup">Login</a>
-        {% endif %}
     </header>
 
 
     <section class="home_page">
         <div class="container">
             <div class="home_page_contents">
-                {%if logged_in %}
-                <h1>Hi, {{username}}!</h1>
-                {% else %}
-                <h1></h1>
-                {% endif %}
                 <h1>This is Tempify!</h1>
                 <h3>Track the temp, feel the flow—Tempify helps your world grow!</h3>
                 <p>Your trusted partner in real-time monitoring of temperature, 
