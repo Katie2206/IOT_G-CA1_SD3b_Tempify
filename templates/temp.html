@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='tempStyles.css') }}">
+    <title>Document</title>
+</head>
+<body>
+    <header class="temp_header">
+        <a href="{{ url_for('index')}}" class="temp_logo">Tempify</a>
+
+        <nav class="temp_nav">
+            <a href="{{ url_for('index')}}" class="nav_item">Home</a>
+            <a href="{{ url_for('main')}}" class="nav_item">Plant</a>
+            <a href="{{ url_for('temp')}}" class="nav_item">Temperature</a>
+            <a href="{{ url_for('humidity')}}" class="nav_item">Humidity</a>
+            <a href="{{ url_for('soilTemp')}}" class="nav_item"> Soil Temperature</a>
+            <a href="/protected_area" class="nav_item"> Device</a> 
+            <a href="#" class="nav_item">About</a>
+        </nav>
+
+        {% if logged_in %}
+        <a href="{{ url_for('logout') }}" class="temp_signup">Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="temp_signup">Login</a>
+        {% endif %}
+
+    </header>
+
+
+    <section class="main_page">
+        <div class="main_page_container">
+            <div class="main_page_contents">
+                <div class="tempature">
+                    <h2>TEMPERATURE</h2>
+                    <h1>Current: --</h1>
+                    <h1>Min: --</h1>
+                    <h1>Max: --</h1>
+                    <h1>Ideal: --</h1>
+                    <img src="{{ url_for('static', filename='images/hot.png') }}" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

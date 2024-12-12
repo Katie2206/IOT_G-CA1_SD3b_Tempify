@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Document</title>
+</head>
+<body>
+    <header class="temp_header">
+        <a href="{{ url_for('index')}}" class="temp_logo">Tempify</a>
+
+        <nav class="temp_nav">
+            <a href="{{ url_for('index')}}" class="nav_item">Home</a>
+            <a href="{{ url_for('main')}}" class="nav_item">Plant</a>
+            <a href="{{ url_for('temp')}}" class="nav_item">Temperature</a>
+            <a href="{{ url_for('humidity')}}" class="nav_item">Humidity</a>
+            <a href="{{ url_for('soilTemp')}}" class="nav_item"> Soil Temperature</a>
+            <a href="/protected_area" class="nav_item"> Device</a> 
+            <a href="#" class="nav_item">About</a>
+        </nav>
+
+        {% if logged_in %}
+        <a href="{{ url_for('logout') }}" class="temp_signup">Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="temp_signup">Login</a>
+        {% endif %}
+
+    </header>
+
+
+    <section class="home_page">
+        <div class="container">
+            <div class="home_page_contents">
+
+                {%if logged_in %}
+                <h1>Hi, {{username}}!</h1>
+                {% else %}
+                <h1></h1>
+                {% endif %}
+
+                <h1>This is Tempify!</h1>
+                <h3>Track the temp, feel the flow—Tempify helps your world grow!</h3>
+                <p>Your trusted partner in real-time monitoring of temperature, 
+                    humidity, and soil conditions. With Tempify, 
+                    stay informed and make smarter decisions to protect your environment and optimize your operations.</p>  
+                <div class="button">
+                    <a href="{{ url_for('main')}}">Begin</a>
+                </div>        
+            </div>
+            <div class="home_image">
+                <img src="{{ url_for('static', filename='images/illustration.webp') }}" alt="Monitoring Device">
+            </div>   
+        </div>
+
+    </section>
+</body>
+</html>
