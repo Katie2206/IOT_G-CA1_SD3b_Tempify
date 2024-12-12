@@ -2,113 +2,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class User(db.Model):
-    __tablename__ = "UserInformation"
-    ID = db.Column(db.Integer, primary_key = True)
-    User_ID = db.Column(db.Integer)
-    Username = db.Column(db.String(255), nullable=False)
-    Email_Address = db.Column(db.String(255), nullable=False)
-    Token = db.Column(db.String(255))
-    Read_Access = db.Column(db.Integer)
-    Write_Access = db.Column(db.Integer)
-
-    def __init__(self, User_ID, Username, Email_Address, Token, Read_Access, Write_Access):
-        self.User_ID = User_ID
-        self.Username = Username
-        self.Email_Address = Email_Address
-        self.Token = Token
-        self.Read_Access = Read_Access
-        self.Write_Access = Write_Access
-
-
-def delete_all():
-    try:
-        db.session.query(User).delete()
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-
-
-def get_user_row_if_exists(Email_Address):
-    get_user_row = User.query.filter_by(Email_Address = Email_Address).first()
-    if get_user_row is not None:
-        return get_user_row
-    else:
-        print("That User Does Not Exist")
-        return False
-    
-
-def add_user_and_login(Username, User_ID, Email_Address):
-    row = get_user_row_if_exists(Email_Address)
-    if row is not False:
-        db.session.commit()
-    else:
-        new_user = User(Username, User_ID, Email_Address, None, 0, 0)
-        db.session.add(new_user)
-        db.session.commit()
-
-
-def add_token(Email_Address, Token):
-    row = get_user_row_if_exists(Email_Address)
-    if row is not False:
-        row.Token = Token
-        db.session.commit()
-
-
-def get_token(Email_Address):
-    row = get_user_row_if_exists(Email_Address)
-    if row is not False:
-        return row.Token
-    else:
-        print("User With ID: " + Email_Address + " Doesn't Exist")
-
-
-def delete_revoked_token(Email_Address):
-    row = get_user_row_if_exists(Email_Address)
-    if row is not False:
-        row.Token = None
-        db.session.commit()
-
-
-def view_all_users():
-    rows = User.query.all()
-    print_results(rows)
-
-
-def user_logout(Email_Address):
-    row = get_user_row_if_exists(Email_Address)
-    if row is not False:
-        row.login = 0
-        db.session.commit()
-
-
-def print_results(rows):
-    for row in rows:
-        print(f"{row.User_ID} | {row.Username} | {row.Email_Address}")
-
-
-def get_all_users():
-    rows = User.query.all()
-    records = {"User" : []}
-    for row in rows:
-        records["User"].append([row.User_ID, row.Username, row.Email_Address])
-    return records
-        
-
-def add_user_permission(Email_Address, Read, Write):
-    row = get_user_row_if_exists(Email_Address)
-    if row is not False:
-        if Read == "true":
-            row.Read_Access = 1
-        else:
-            row.Read_Access = 0
-        if Write == "true":
-            row.Write_Access = 1
-        else:
-            row.Write_Access = 0
-        db.session.commit()
-
-
 class Plant(db.Model):
     __tablename__ = "PlantInformation"
     Plant_ID = db.Column(db.Integer, primary_key = True)
@@ -118,9 +11,9 @@ class Plant(db.Model):
     Current_Temperature = db.Column(db.Float, nullable=False)
     Current_Humidity = db.Column(db.Float, nullable=False)
     Current_Soil_Moisture = db.Column(db.Float, nullable=False)
-    User_ID = db.Column(db.Integer, nullable=False)
+    # Token = db.Column(db.String(255))
 
-    def __init__(self, Plant_ID, Name, Plant_Type, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture, User_ID):
+    def __init__(self, Plant_ID, Name, Plant_Type, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture):
         self.Plant_ID = Plant_ID
         self.Name = Name
         self.Plant_Type = Plant_Type
@@ -128,7 +21,7 @@ class Plant(db.Model):
         self.Current_Temperature = Current_Temperature
         self.Current_Humidity = Current_Humidity
         self.Current_Soil_Moisture = Current_Soil_Moisture
-        self.User_ID = User_ID
+        # self.Token = Token
 
 def delete_all_plants():
     try:
@@ -164,7 +57,29 @@ def view_all_plants():
 
 def print_plants(rows):
     for row in rows:
-        print(f"{row.Plant_ID} | {row.Name} | {row.Last_Updated} | {row.Current_Temperature} | {row.Current_Humidity} | {row.Current_Soil_Moisture} | {row.User_ID}")
+        print(f"{row.Plant_ID} | {row.Name} | {row.Last_Updated} | {row.Current_Temperature} | {row.Current_Humidity} | {row.Current_Soil_Moisture}")
+
+
+def add_token(Plant_ID, Token):
+    row = get_plant_if_exists(Plant_ID)
+    if row is not False:
+        row.Token = Token
+        db.session.commit()
+
+
+def get_token(Plant_ID):
+    row = get_plant_if_exists(Plant_ID)
+    if row is not False:
+        return row.Token
+    else:
+        print("Plant With ID: " + Plant_ID + " Doesn't Exist")
+
+
+def delete_revoked_token(Plant_ID):
+    row = get_plant_if_exists(Plant_ID)
+    if row is not False:
+        row.Token = None
+        db.session.commit()
 
 
 class Temperature(db.Model):
