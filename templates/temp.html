@@ -33,7 +33,11 @@
                     <h1>Min: {{row.Min_Temp}}</h1>
                     <h1>Max: {{row.Max_Temp}}</h1>
                     <h1>Ideal: {{row.Ideal_Temp}}</h1>
+                    {% if row.Current_Temperature > row.Max_Temp %}
                     <img src="{{ url_for('static', filename='images/hot.png') }}" alt="">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='images/cold.png') }}" alt="">
+                    {% endif %}
                 </div>
                 {%endfor%}
             </div>
