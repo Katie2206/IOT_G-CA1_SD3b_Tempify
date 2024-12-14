@@ -7,10 +7,10 @@ class Plant(db.Model):
     Plant_ID = db.Column(db.Integer, primary_key = True)
     Name = db.Column(db.String(255), nullable=False)
     Plant_Type = db.Column(db.String(255), nullable=False)
-    Last_Updated = db.Column(db.DateTime, nullable=False)
+    Last_Updated = db.Column(db.String(255), nullable=False)
     Current_Temperature = db.Column(db.Float, nullable=False)
     Current_Humidity = db.Column(db.Float, nullable=False)
-    Current_Soil_Moisture = db.Column(db.Float, nullable=False)
+    Current_Soil_Moisture = db.Column(db.String, nullable=False)
     # Token = db.Column(db.String(255))
 
     def __init__(self, Plant_ID, Name, Plant_Type, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture):
@@ -31,6 +31,15 @@ def delete_all_plants():
         db.session.rollback()
 
 
+def get_plant_id(Plant_ID):
+    get_plant = Plant.query.filter_by(Plant_ID = Plant_ID).first()
+    if get_plant is not None:
+        return get_plant.Plant_ID
+    else:
+        print("No Plant ID")
+        return False
+
+
 def get_plant_if_exists(Plant_ID):
     get_plant_row = Plant.query.filter_by(Plant_ID = Plant_ID).first()
     if get_plant_row is not None:
@@ -40,12 +49,12 @@ def get_plant_if_exists(Plant_ID):
         return False
 
 
-def add_plant(Plant_ID, Name, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture, User_ID):
+def add_plant(Plant_ID, Name, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture):
     row = get_plant_if_exists(Plant_ID)
     if row is not False:
         db.session.commit()
     else:
-        new_plant = User(Plant_ID, Name, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture, User_ID)
+        new_plant = Plant(Plant_ID, Name, Last_Updated, Current_Temperature, Current_Humidity, Current_Soil_Moisture)
         db.session.add(new_plant)
         db.session.commit()
 
@@ -152,17 +161,11 @@ def print_humidity(rows):
 class Soil(db.Model):
     __tablename__ = "SoilMoistureInformation"
     Current_Soil_Moisture = db.Column(db.String(255), nullable=False, primary_key = True)
-    Above_Moisture = db.Column(db.String(255), nullable=False)
-    Below_Moisture = db.Column(db.String(255), nullable=False)
-    Soil_Moisture = db.Column(db.Integer, nullable=False)
-    Threshold = db.Column(db.Integer, nullable=False)
+    Ideal_Moisture_Level = db.Column(db.String(255), nullable=False)
 
-    def __init__(self, Current_Soil_Moisture, Above_Moisture, Below_Moisture, Soil_Moisture, Threshold):
+    def __init__(self, Current_Soil_Moisture, Ideal_Moisture_Level):
         self.Current_Soil_Moisture = Current_Soil_Moisture
-        self.Above_Moisture = Above_Moisture
-        self.Min_Below_MoistureTemp = Below_Moisture
-        self.Soil_Moisture = Soil_Moisture
-        self.Threshold = Threshold  
+        self.Ideal_Moisture_Level = Ideal_Moisture_Level
 
 
 def delete_all_soil():
@@ -172,11 +175,11 @@ def delete_all_soil():
     except Exception as e:
         db.session.rollback()
 
-def view_all_humidity():
+def view_all_soil():
     rows = Soil.query.all()
     print_soil(rows)
 
 
 def print_soil(rows):
     for row in rows:
-        print(f"{row.Current_Soil_Moisture} | {row.Above_Moisture} | {row.Below_Moisture} | {row.Soil_Moisture} | {row.Threshold}")
+        print(f"{row.Current_Soil_Moisture} | {row.Ideal_Moisture_Level}")
