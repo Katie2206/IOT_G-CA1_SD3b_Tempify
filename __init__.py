@@ -19,6 +19,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 Plant = my_db.Plant
+Soil = my_db.Soil
+Temperature = my_db.Temperature
 
 alive = 0
 data = {}
@@ -41,11 +43,13 @@ def main():
 
 @app.route("/temp")
 def temp():
-    return render_template("temp.html")
+    temp_data = db.session.query(Temperature).all()
+    return render_template("temp.html", temp = temp_data)
 
 @app.route("/soilTemp")
 def soilTemp():
-    return render_template("soilTemp.html")
+    soil_data = db.session.query(Soil).all()
+    return render_template("soilTemp.html", soil = soil_data)
 
 @app.route("/humidity")
 def humidity():

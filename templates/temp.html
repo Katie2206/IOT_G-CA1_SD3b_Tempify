@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.8.2.8.js"></script>
+    <script src="static/js/main.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tempStyles.css') }}">
     <title>Document</title>
 </head>
@@ -15,7 +17,7 @@
             <a href="{{ url_for('main')}}" class="nav_item">Plant</a>
             <a href="{{ url_for('temp')}}" class="nav_item">Temperature</a>
             <a href="{{ url_for('humidity')}}" class="nav_item">Humidity</a>
-            <a href="{{ url_for('soilTemp')}}" class="nav_item"> Soil Temperature</a>
+            <a href="{{ url_for('soilTemp')}}" class="nav_item"> Soil Moisture</a>
         </nav>
 
     </header>
@@ -24,14 +26,16 @@
     <section class="main_page">
         <div class="main_page_container">
             <div class="main_page_contents">
+                {%for row in temp%}
                 <div class="tempature">
                     <h2>TEMPERATURE</h2>
-                    <h1>Current: --</h1>
-                    <h1>Min: --</h1>
-                    <h1>Max: --</h1>
-                    <h1>Ideal: --</h1>
+                    <h1>Current: {{row.Current_Temperature}}</h1>
+                    <h1>Min: {{row.Min_Temp}}</h1>
+                    <h1>Max: {{row.Max_Temp}}</h1>
+                    <h1>Ideal: {{row.Ideal_Temp}}</h1>
                     <img src="{{ url_for('static', filename='images/hot.png') }}" alt="">
                 </div>
+                {%endfor%}
             </div>
         </div>
     </section>
