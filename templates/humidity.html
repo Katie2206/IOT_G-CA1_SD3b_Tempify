@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.8.2.8.js"></script>
+    <script src="static/js/main.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/humidityStyles.css') }}">
     <title>Document</title>
 </head>
@@ -15,7 +17,7 @@
             <a href="{{ url_for('main')}}" class="nav_item">Plant</a>
             <a href="{{ url_for('temp')}}" class="nav_item">Temperature</a>
             <a href="{{ url_for('humidity')}}" class="nav_item">Humidity</a>
-            <a href="{{ url_for('soilTemp')}}" class="nav_item"> Soil Temperature</a>
+            <a href="{{ url_for('soilTemp')}}" class="nav_item"> Soil Moisture</a>
         </nav>
 
     </header>
@@ -23,14 +25,20 @@
     <section class="main_page">
         <div class="main_page_container">
             <div class="main_page_contents">
+                {%for row in humidity%}
                 <div class="tempature">
-                    <h2>Humidity</h2>
-                    <h1>Current: --</h1>
-                    <h1>Min: --</h1>
-                    <h1>Max: --</h1>
-                    <h1>Ideal: --</h1>
+                    <h2>HUMIDITY</h2>
+                    <h1>Current: {{row.Current_Humidity}}</h1>
+                    <h1>Min: {{row.Min_Humidity}}</h1>
+                    <h1>Max: {{row.Max_Humidity}}</h1>
+                    <h1>Ideal: {{row.Ideal_Humidity}}</h1>
+                    {% if row.Current_Humidity > row.Max_Humidity %}
+                    <img src="{{ url_for('static', filename='images/hot.png') }}" alt="">
+                    {% else %}
                     <img src="{{ url_for('static', filename='images/cold.png') }}" alt="">
+                    {% endif %}
                 </div>
+                {%endfor%}
             </div>
         </div>
     </section>

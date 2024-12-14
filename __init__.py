@@ -21,6 +21,7 @@ db.init_app(app)
 Plant = my_db.Plant
 Soil = my_db.Soil
 Temperature = my_db.Temperature
+Humidity = my_db.Humidity
 
 alive = 0
 data = {}
@@ -53,7 +54,8 @@ def soilTemp():
 
 @app.route("/humidity")
 def humidity():
-    return render_template("humidity.html")
+    humidity_data = db.session.query(Humidity).all()
+    return render_template("humidity.html", humidity = humidity_data)
 
 
 @app.route("/keep_alive")
