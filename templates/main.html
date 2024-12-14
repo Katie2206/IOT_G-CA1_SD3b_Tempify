@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.8.2.8.js"></script>
+    <script src="static/js/main.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesmain.css') }}">
 </head>
-<body>
+<body onload="setupPubNub(); keepAlive(); time();">
     <header class="temp_header">
         <a href="{{ url_for('index')}}" class="temp_logo">Tempify</a>
 
@@ -18,28 +20,30 @@
         </nav>
 
     </header>
-
-
+    <h3>Connection: <span id="connection_id">...</span></h3>
     <section class="main_page">
         <div class="main_page_container">
             <div class="main_page_contents">
+                {%for row in plants%}
                 <div class="tempature" onclick="location.href='/temp'">
                     <h1>TEMPERATURE</h1>
-                    <h3>9°C</h3>
+                    <h3>{{row.Current_Temperature}}°C</h3>
                     <img src="{{ url_for('static', filename='images/hot.png') }}" alt="">
                 </div>
     
                 <div class="humidity" onclick="location.href='/humidity'">
                     <h1>HUMIDITY</h1>
-                    <h3>8°C</h3>
+                    <h3><td>{{row.Current_Humidity}}%</td></h3>
                     <img src="{{ url_for('static', filename='images/cold.png') }}" alt="">
                </div>
     
                <div class="soil_temp" onclick="location.href='/soilTemp'">
-                    <h1>SOIL TEMPERATURE</h1>
-                    <h3>OK</h3>
+                    <h1>SOIL MOISTURE</h1>
+                    <h3><td>{{row.Current_Soil_Moisture}}</td></h3>
+                    
                     <img src="{{ url_for('static', filename='images/ok.png') }}" alt="">
                </div>
+               {%endfor%}
             </div>
         </div>
     </section>
