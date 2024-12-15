@@ -36,6 +36,14 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(moisture_PIN, GPIO.IN)
 
+
+ALL_GPIO_PINS = list(range(2, 28))  
+USED_PINS = [moisture_PIN]  
+UNUSED_PINS = [pin for pin in ALL_GPIO_PINS if pin not in USED_PINS]
+
+for pin in UNUSED_PINS:
+    GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_OFF)
+
 def main():
     temperature_detection()
     humidity_detection()
