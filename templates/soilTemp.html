@@ -28,9 +28,13 @@
                 {%for row in soil%}
                 <div class="tempature">
                     <h2>SOIL MOISTURE</h2>
-                    <h1>Current: <span id="soil_sensor">...</span></h1>
+                    <h1>Current: {{row.Current_Soil_Moisture}}</h1>
                     <h1>Ideal Moisture Level: {{row.Ideal_Moisture_Level}}</h1>
+                    {% if row.Current_Soil_Moisture != "HIGH" %}
+                    <img src="{{ url_for('static', filename='images/thumbs-down.png') }}" alt="">
+                    {% else %}
                     <img src="{{ url_for('static', filename='images/ok.png') }}" alt="">
+                    {% endif %}
                 </div>
                 {%endfor%}
             </div>
