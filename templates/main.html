@@ -16,32 +16,30 @@
             <a href="{{ url_for('main')}}" class="nav_item">Plant</a>
             <a href="{{ url_for('temp')}}" class="nav_item">Temperature</a>
             <a href="{{ url_for('humidity')}}" class="nav_item">Humidity</a>
-            <a href="{{ url_for('soilTemp')}}" class="nav_item"> Soil Temperature</a>
+            <a href="{{ url_for('soilTemp')}}" class="nav_item"> Soil Moisture</a>
         </nav>
 
     </header>
-    <h3>Connection: <span id="connection_id">...</span></h3>
     <section class="main_page">
         <div class="main_page_container">
             <div class="main_page_contents">
                 {%for row in plants%}
                 <div class="tempature" onclick="location.href='/temp'">
                     <h1>TEMPERATURE</h1>
-                    <h3>{{row.Current_Temperature}}°C</h3>
-                    <img src="{{ url_for('static', filename='images/hot.png') }}" alt="">
+                    <h3><span id="temp">...</span>°C</h3>
+                    <!-- <img src="{{ url_for('static', filename='images/ok.png') }}" alt=""> -->
                 </div>
     
                 <div class="humidity" onclick="location.href='/humidity'">
                     <h1>HUMIDITY</h1>
-                    <h3><td>{{row.Current_Humidity}}%</td></h3>
-                    <img src="{{ url_for('static', filename='images/cold.png') }}" alt="">
+                    <h3><td><span id="humidity">...</span>%</td></h3>
+                    <!-- <img src="{{ url_for('static', filename='images/ok.png') }}" alt=""> -->
                </div>
     
                <div class="soil_temp" onclick="location.href='/soilTemp'">
                     <h1>SOIL MOISTURE</h1>
-                    <h3><td>{{row.Current_Soil_Moisture}}</td></h3>
-                    
-                    <img src="{{ url_for('static', filename='images/ok.png') }}" alt="">
+                    <h3><span id="soil_sensor">...</span></h3>
+                    <!-- <img src="{{ url_for('static', filename='images/ok.png') }}" alt=""> -->
                </div>
                {%endfor%}
             </div>

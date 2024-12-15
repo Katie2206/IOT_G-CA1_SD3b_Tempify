@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import pathlib
 
-from flask import Flask, session, redirect, render_template
+from flask import Flask, session, request, render_template
 from .config import config
 
 from . import my_db
@@ -57,7 +57,6 @@ def humidity():
     humidity_data = db.session.query(Humidity).all()
     return render_template("humidity.html", humidity = humidity_data)
 
-
 @app.route("/keep_alive")
 def keep_alive():
     global alive, data
@@ -68,27 +67,16 @@ def keep_alive():
     print(parsed_json)
     return str(parsed_json)
 
-            
-# @app.route('/get_plant_token', methods=['POST'])
-# def get_plant_token():
-#     Plant_ID = 1
-#     Token = my_db.get_token(Plant_ID)
-#     if Token is not None:
-#         Token = get_or_refresh_token(Token)
-#         token_response = {'Token': Token, 'cipher_key': pb.cipher_key}
-#     else:
-#         token_response = {'Token':123, 'cipher_key':"Thiswillnotwork"}
-#     return json.dumps(token_response)
+#TRYING TO PASS LIVE DATA TO DATABASE
+@app.route("/pubnub_data", methods = ['POST'])
+def pubnub_data():
+    received = request.get_json()
+    temp = received.get("temperature_value")
 
-
-# def get_or_refresh_token(Token):
-#     timestamp, ttl = pb.parse_token(Token)
-#     current_time = time.time()
-#     if(timestamp+(ttl*60)) - current_time > 0:
-#         return Token
-#     else:
-#         return Token
-    
+    if temp is not None:
+        updated = db.get_temp_if_exists(1)
+        updated.Current_Temperature = temp
+        db.session.commit()
 
 if __name__ == "__main__":
    app.run()

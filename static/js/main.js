@@ -6,11 +6,15 @@ let ttl = 60;
 
 function refreshToken()
 {
-    console.log("Get user token request");
-    sendEvent('get_user_token');
+    console.log("Get plant token request");
+    sendEvent('get_plant_token');
     let refresh_time = (ttl-1)*60*1000;
     console.log(refresh_time);
     setTimeout('refreshToken()', refresh_time);
+}
+
+function get_temp(){
+    
 }
 
 function time()
@@ -19,11 +23,13 @@ function time()
     let currentSecond = d.getTime();
     if(currentSecond - aliveSecond > heartBeatRate + 1000)
     {
-        document.getElementById("connection_id").innerHTML="DEAD";
+        // document.getElementById("connection_id").innerHTML="DEAD";
+        console.log("DEAD")
     }
     else
     {
-        document.getElementById("connection_id").innerHTML="ALIVE";
+        // document.getElementById("connection_id").innerHTML="ALIVE";
+        console.log("ALIVE")
     }
     setTimeout('time()', 1000);
 }
@@ -43,25 +49,14 @@ function keepAlive()
     setTimeout('keepAlive()', heartBeatRate);
 }
 
-function handleClick(cb)
-{
-    if(cb.checked)
-    {
-        value="on";
-    }
-    else
-    {
-        value = "off";
-    }
-    publishMessage({"buzzer":value});
-}
 
 const setupPubNub = () => {
     pubnub = new PubNub({
-        publishKey: 'PUBNUB_PUBLISH_KEY',
-        subscribeKey: 'PUBNUB_SUBSCRIBE_KEY',
-        userId: 'your_id',
+        publishKey: 'pub-c-ad694749-9bad-47ee-8f11-c0c31bd34e98',
+        subscribeKey: 'sub-c-e9f75f41-3ccb-4ac1-826b-f1b00bef42d5',
+        userId: 'testUser12'
     });
+    console.log("Checking PubNub:   ", pubnub)
     
     const channel = pubnub.channel(appChannel);
     
@@ -71,25 +66,68 @@ const setupPubNub = () => {
         status: (s) =>{
             console.log("Status", s.category);
         },
+        message: (event) => {
+            console.log("Message2", event.message);
+            const PI_response = event.message;
+            const time_value = PI_response.time_taken;
+            const temp_value = PI_response.temperature_value;
+            const humidity_value = PI_response.humidity_value;
+            const soil_value = PI_response.soil_value;
+            console.log("time", time_value, "temp", temp_value, "humidity", humidity_value, "soil" , soil_value)
+        }
     });
 
     subscription.onMessage = (messageEvent) => {
         handleMessage(messageEvent.message);
     };
 
+    console.log("channel:", channel)
     subscription.subscribe();
 };
 
 function handleMessage(message)
 {
-    if(message == '"Motion":"Yes"')
-    {
-        document.getElementById("motion_id").innerHTML = "Yes";
+    temp = message.temperature_value;
+    soil = message.soil_value;
+    humidity = message.humidity_value;
+
+    if(soil == 'LOW')
+    {   
+       document.getElementById("soil_sensor").innerHTML = "LOW";
     }
-    if(message == '"Motion":"No"')
+    if(soil == 'HIGH')
     {
-        document.getElementById("motion_id").innerHTML = "No";
+        document.getElementById("soil_sensor").innerHTML = "HIGH";
     }
+    if(humidity > 0 || humidity < 100)
+    {
+        document.getElementById("humidity").innerHTML = humidity;
+    }
+    if(humidity < 0 || humidity > 100)
+    {
+        document.getElementById("humidity").innerHTML = "ERROR";
+    }
+    if(temp > 0 || temp < 100)
+    {
+        document.getElementById("temp").innerHTML = temp;
+    }
+    if(temp < 0 || temp > 100)
+    {
+        document.getElementById("temp").innerHTML = "ERROR";
+    }
+
+    // TRYING TO PASS LIVE DATA TO DATABASE
+    // fetch('/pubnub_data',
+    //     {method: "POST",
+    //         body: JSON.stringify({
+    //             temperature: temp,
+    //             humidity: humidity,
+    //             soil: soil
+    //         })
+    //     })
+    //     .then(response=>response.json())
+    //     .catch(error=>console.log(error));
+
 }
 
 const publishMessage = async(message) => {
@@ -100,32 +138,6 @@ const publishMessage = async(message) => {
         },
     };
     await pubnub.publish(publishPayload);
-}
-
-function grantAccess(ab)
-{
-    var userId = ab.id.split("-")[2];
-    var readState = document.getElementById("read-user-"+userId).checked;
-    var writeState = document.getElementById("write-user-"+userId).checked;
-    sendEvent("grant-"+userId+"-"+readState+"-"+writeState);
-}
-
-function sendEvent(value)
-{
-    fetch(value,
-        {
-            method:"POST",
-        })
-        .then(response => response.json())
-        .then(responseJson =>{
-            console.log(responseJson);
-            if(responseJson.hasOwnProperty('token'))
-            {
-                pubnub.setToken(responseJson.token);
-                pubnub.setUUID(responseJson.uuid);
-                subscribe();
-            }
-        });
 }
 
 function subscribe(){
