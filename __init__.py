@@ -67,16 +67,6 @@ def keep_alive():
     print(parsed_json)
     return str(parsed_json)
 
-#TRYING TO PASS LIVE DATA TO DATABASE
-@app.route("/pubnub_data", methods = ['POST'])
-def pubnub_data():
-    received = request.get_json()
-    temp = received.get("temperature_value")
-
-    if temp is not None:
-        updated = db.get_temp_if_exists(1)
-        updated.Current_Temperature = temp
-        db.session.commit()
 
 if __name__ == "__main__":
    app.run()
