@@ -8,6 +8,7 @@ const setupPubNub = () => {
     pubnub = new PubNub({
         publishKey: 'pub-c-ad694749-9bad-47ee-8f11-c0c31bd34e98',
         subscribeKey: 'sub-c-e9f75f41-3ccb-4ac1-826b-f1b00bef42d5',
+        cryptoModule: PubNub.CryptoModule.aesCbcCryptoModule({cipherKey:'et4y586hd4ty58he'}),
         userId: 'testUser12'
     });
     console.log("Checking PubNub:   ", pubnub)

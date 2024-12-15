@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='humidityStyles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='soilTempStyles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesmain.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='tempStyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/humidityStyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/soilTempStyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesmain.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tempStyles.css') }}">
+    <script src="static/js/main.js"></script>
     <title>{% block title %}{% endblock  %}</title>
 </head>
-<body>
+<body onload = "setupPubNub(); keepAlive(); time(); refreshToken();">
     {% block body %}{% endblock  %}
 </body>
 </html>
