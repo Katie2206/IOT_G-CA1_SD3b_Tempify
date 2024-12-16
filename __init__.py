@@ -25,6 +25,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = config.get('SQLALCHEMY_DATABASE_URI')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
+Plant = my_db.Plant
+Soil = my_db.Soil
+Temperature = my_db.Temperature
+Humidity = my_db.Humidity
 
 GOOGLE_CLIENT_ID = (
     config.get("GOOGLE_CLIENT_ID")
@@ -62,20 +66,23 @@ def index():
 
 @app.route("/main")
 def main():
-    return render_template("main.html", logged_in=("google_id" in session), username=session.get("name"))
+    plant_data = db.session.query(Plant).all()
+    return render_template("main.html",plants = plant_data, logged_in=("google_id" in session), username=session.get("name"))
 
 @app.route("/temp")
 def temp():
+    
     return render_template("temp.html", logged_in=("google_id" in session), username=session.get("name"))
 
 @app.route("/soilTemp")
 def soilTemp():
-    return render_template("soilTemp.html", logged_in=("google_id" in session), username=session.get("name"))
+    soil_data = db.session.query(Soil).all()
+    return render_template("soilTemp.html",soil = soil_data, logged_in=("google_id" in session), username=session.get("name"))
 
 @app.route("/humidity")
 def humidity():
-
-    return render_template("humidity.html", logged_in=("google_id" in session), username=session.get("name"))
+    humidity_data = db.session.query(Humidity).all()
+    return render_template("humidity.html",humidity = humidity_data, logged_in=("google_id" in session), username=session.get("name"))
 
 
 @app.route("/protected_area")
@@ -139,25 +146,31 @@ def grant_access(user_id, read, write):
         if session['google_id'] == config.get("GOOGLE_ADMIN_ID"):
             print(f"Admin granting {user_id}-{read}-{write}")
             my_db.add_user_permission(user_id, read, write)
-            if (read=="true" or read==True) and (write=="true" or write==True):
+            if read=="true" and write=="true":
+                token = pb.grant_read_write_access(user_id)
+                my_db.add_token(user_id, token)
+                access_response = {'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id}
+                return json.dumps(access_response)
+            elif read==True and write==True:
                 token = pb.grant_read_write_access(user_id)
                 my_db.add_token(user_id, token)
                 return token
             elif read=="true" and write=="false":
                 token = pb.grant_read_access(user_id)
                 my_db.add_token(user_id, token)
-                access_response={'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id}
+                access_response = {'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id}
                 return json.dumps(access_response)
             elif read=="false" and write=="true":
                 token = pb.grant_write_access(user_id)
                 my_db.add_token(user_id, token)
-                access_response={'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id}
+                access_response = {'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id}
                 return json.dumps(access_response)
             else:
                 #Remove any existing token from the database
                 my_db.delete_revoked_token(user_id)
-                access_response={'token':123, 'cipher_key':pb.cipher_key, 'uuid':user_id}
+                access_response={'token':123, 'cipher_key':"Thiswillnotwork", 'uuid':user_id}
                 return json.dumps(access_response)
+           
         else:
             print(f"Non admin attempting to grant privileges {user_id}-{read}-{write}")
             my_db.add_user_permission(user_id, read, write)
@@ -165,29 +178,29 @@ def grant_access(user_id, read, write):
             if token is not None:
                 timestamp, ttl, user_id, read, write = pb.parse_token(token)
                 current_time = time.time
-                if(timestamp + (ttl*60)) - current_time > 0:
+                if (timestamp + (ttl*60)) - current_time > 0:
                     print("Token is still valid")
-                    access_response={'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id} 
+                    access_response = {'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id}
                     return json.dumps(access_response)
                 else:
                     print("Token refresh needed")
                     if read and write:
                         token = pb.grant_read_write_access(user_id)
                         my_db.add_token(user_id, token)
-                        access_response={'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id} 
+                        access_response = {'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id}
                         return json.dumps(access_response)
                     elif read:
                         token = pb.grant_read_access(user_id)
                         my_db.add_token(user_id, token)
-                        access_response={'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id} 
+                        access_response = {'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id}
                         return json.dumps(access_response)
-                    elif read:
-                        token = pb.gran_write_access(user_id)
+                    elif write:
+                        token = pb.grant_write_access(user_id)
                         my_db.add_token(user_id, token)
-                        access_response={'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id} 
+                        access_response = {'token':token, 'cipher_key':pb.cipher_key, 'uuid':user_id}
                         return json.dumps(access_response)
                     else:
-                        access_response={'token':123, 'cipher_key':pb.cipher_key, 'uuid':user_id}
+                        access_response={'token':123, 'cipher_key':"Thiswillnotwork", 'uuid':user_id}
                         return json.dumps(access_response)
                     
                 
